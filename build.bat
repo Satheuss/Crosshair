@@ -1,12 +1,24 @@
 @echo off
-REM ==== Rode este arquivo com o ambiente virtual (venv) ATIVADO ====
+REM ==== Este script usa o Python de DENTRO do venv (venv\Scripts\python.exe) ====
+REM Assim o empacotamento sempre usa o ambiente certo, com o PySide6 instalado,
+REM em vez de depender do "python" solto do PATH (que pode cair no Python global).
 
-echo Instalando PyInstaller (se necessario)...
-pip install pyinstaller
+set PY=venv\Scripts\python.exe
+
+if not exist "%PY%" (
+    echo ERRO: nao encontrei venv\Scripts\python.exe
+    echo Crie o ambiente virtual primeiro:  python -m venv venv
+    pause
+    exit /b 1
+)
+
+echo Instalando dependencias no venv (PySide6 + PyInstaller)...
+"%PY%" -m pip install --upgrade pip
+"%PY%" -m pip install PySide6 pyinstaller
 
 echo.
 echo Gerando o executavel...
-python -m PyInstaller Crosshair.spec
+"%PY%" -m PyInstaller --noconfirm Crosshair.spec
 
 echo.
 echo Copiando recursos para a pasta do app...
